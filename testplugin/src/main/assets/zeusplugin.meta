@@ -1,5 +1,5 @@
 {
-    "name": "zeusplugin_test",
+    "name": "zeusplugin_asset",
     "minVersion": "1",
     "version": "1",
     "mainClass": "zeus.testplugin.MainActivity"

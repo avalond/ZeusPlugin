@@ -20,7 +20,7 @@ public class ZeusPlugin {
     private boolean isInstalling = false;
     private boolean isAssetInstalling = false;
 
-    public ZeusPlugin(String pluginId) {
+    protected ZeusPlugin(String pluginId) {
         mPluginId = pluginId;
     }
 
@@ -51,9 +51,10 @@ public class ZeusPlugin {
             mInstalledPathInfo = getInstalledPathInfoNoCache();
             return false;
         }
-        //拷贝so文件，一些插件是没有so文件，而这个方法耗时还稍微高点，所以对于没有so的插件可以直接把这个拷贝注掉。
-        //我们内部是判断当前的插件的id，有so的执行，没有的跳过，比如mPluginId中包含"so"字样的为有so的插件。
-        if (!copySoFile(mInstalledPathInfo, PluginUtil.getCpuArchitecture())) {
+        //拷贝so文件，一些插件是没有so文件，而这个方法耗时还稍微高点，所以对于没有so的插件和补丁是不会拷贝的。
+        if (!PluginUtil.isHotfixWithoutSoFile(mPluginId) &&
+                !PluginUtil.isPluginWithoutSoFile(mPluginId) &&
+                !copySoFile(mInstalledPathInfo, PluginUtil.getCpuArchitecture())) {
             isInstalling = false;
             mInstalledPathInfo = getInstalledPathInfoNoCache();
             return false;
@@ -183,7 +184,7 @@ public class ZeusPlugin {
         PluginUtil.createDir(insideLibPath);
         String apkLibPath = PluginUtil.getLibFile(cpuType);
         //首先将apk中libs文件夹下的一级so文件拷贝
-        return PluginUtil.unzipFile(getAPKPath(mPluginId), insideLibPath, apkLibPath, installedPathInfo);
+        return PluginUtil.unzipFile(getAPKPath(mPluginId), insideLibPath, apkLibPath);
     }
 
     /**
